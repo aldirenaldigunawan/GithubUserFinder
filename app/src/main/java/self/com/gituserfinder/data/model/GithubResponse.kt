@@ -6,7 +6,7 @@ data class GithubResponse(
     @SerializedName("total_count")
     val totalCount: Long,
     @SerializedName("incomplete_results")
-    val stillHasResult: Boolean,
+    val noMoreResult: Boolean,
     @SerializedName("items")
     val users: List<UserResponse>
 )

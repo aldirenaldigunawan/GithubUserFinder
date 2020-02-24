@@ -46,7 +46,7 @@ class GetGithubUserUseCaseImplTest {
         val userResponse = (1..5).map {
             getDummyUserResponse("user - $it")
         }
-        val response = GithubResponse(0, true, userResponse)
+        val response = GithubResponse(0, false, userResponse)
 
         whenever(gateway.getUsers(username, 1)).thenReturn(Single.just(response))
 
@@ -68,7 +68,7 @@ class GetGithubUserUseCaseImplTest {
         val userResponse = (1..5).map {
             getDummyUserResponse("user - $it")
         }
-        val response = GithubResponse(0, false, userResponse)
+        val response = GithubResponse(0, true, userResponse)
 
         whenever(gateway.getUsers(username, 1)).thenReturn(Single.just(response))
 
@@ -82,19 +82,6 @@ class GetGithubUserUseCaseImplTest {
             )
         }
         usecase.observeState().test().assertValue(FullyLoaded(expectedUserModels))
-    }
-
-    @Test
-    fun given_user_name_passes_twice_to_get_user__should_only_accept_one_request_and_drop_the_rest() {
-        val username = "random"
-        val response = GithubResponse(0, true, emptyList())
-
-        whenever(gateway.getUsers(username, 1)).thenReturn(Single.just(response))
-
-        usecase.getUsers(username)
-        usecase.getUsers(username)
-
-        verify(gateway, times(1)).getUsers(username, 1)
     }
 
     //endregion
@@ -113,7 +100,7 @@ class GetGithubUserUseCaseImplTest {
         val userResponse = (1..5).map {
             getDummyUserResponse("user - $it")
         }
-        val response = GithubResponse(0, true, userResponse)
+        val response = GithubResponse(0, false, userResponse)
 
         whenever(gateway.getUsers(username, 1)).thenReturn(Single.just(response))
         whenever(gateway.getUsers(username, 2)).thenReturn(Single.just(response))
@@ -135,8 +122,8 @@ class GetGithubUserUseCaseImplTest {
         val userResponseNew = (20..25).map {
             getDummyUserResponse("user - $it")
         }
-        val response = GithubResponse(0, true, userResponse)
-        val responseNew = GithubResponse(0, true, userResponseNew)
+        val response = GithubResponse(0, false, userResponse)
+        val responseNew = GithubResponse(0, false, userResponseNew)
 
         whenever(gateway.getUsers(username, 1)).thenReturn(Single.just(response))
         whenever(gateway.getUsers(username, 2)).thenReturn(Single.just(responseNew))
@@ -170,7 +157,7 @@ class GetGithubUserUseCaseImplTest {
         val userResponse = (1..5).map {
             getDummyUserResponse("user - $it")
         }
-        val response = GithubResponse(0, false, userResponse)
+        val response = GithubResponse(0, true, userResponse)
 
         whenever(gateway.getUsers(username, 1)).thenReturn(Single.just(response))
 

@@ -19,10 +19,10 @@ interface GetGithubUserUseCase {
 
     sealed class State {
         object Loading : State()
-        object LoadMoreProgress : State()
         object LoadMoreFailed : State()
         data class Error(val message: String) : State()
         sealed class Data(open val users: List<UserModel>) : State() {
+            object Empty : Data(emptyList())
             data class PartialLoaded(override val users: List<UserModel>) : Data(users)
             data class FullyLoaded(override val users: List<UserModel>) : Data(users)
         }
@@ -42,9 +42,6 @@ class GetGithubUserUseCaseImpl(
     override fun observeState() = pubsub
 
     override fun getUsers(username: String) {
-        if (this.currentQuery == username)
-            return
-
         this.currentQuery = username
         this.currentPage = 1
         currentUsers.clear()
@@ -68,9 +65,11 @@ class GetGithubUserUseCaseImpl(
             .handleLoadingState(isLoadMore)
             .subscribe({
                 currentUsers.addAll(it.toUserModels())
-                val state = if (it.stillHasResult) {
+                val state = if (!it.noMoreResult) {
                     currentPage += 1
                     PartialLoaded(currentUsers)
+                } else if (currentUsers.isEmpty()) {
+                    State.Data.Empty
                 } else {
                     FullyLoaded(currentUsers)
                 }
@@ -83,12 +82,9 @@ class GetGithubUserUseCaseImpl(
 
     private fun Single<GithubResponse>.handleLoadingState(isLoadMore: Boolean): Single<GithubResponse> {
         return this.doOnSubscribe {
-            if (isLoadMore) {
-                pubsub.onNext(State.LoadMoreProgress)
-            } else {
+            if (!isLoadMore) {
                 pubsub.onNext(State.Loading)
             }
-
         }
     }
 
