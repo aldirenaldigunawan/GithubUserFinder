@@ -43,6 +43,7 @@ class ItemAdapter(private val loadMoreClick: () -> Unit) :
     }
 
     fun replaceLastItem(oldItem: MainContract.MainViewObject, newItem: MainContract.MainViewObject) {
+        if(currentList.last() == newItem) return
         val currentItems = if (currentList.last() == oldItem) currentList.dropLast(1) else currentList
         submitList(currentItems + listOf(newItem))
     }

@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">GitUserFinder</string>
     <string name="load_more">Load More</string>
+    <string name="message_error">Something went wrong, please try again</string>
+    <string name="message_no_result">No user match with the input</string>
 </resources>

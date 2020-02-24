@@ -20,8 +20,6 @@ class MainPresenter(
                 when (it) {
                     is GetGithubUserUseCase.State.Error -> view.showError(it.message)
                     is GetGithubUserUseCase.State.Loading -> view.showProgress()
-                    is GetGithubUserUseCase.State.LoadMoreProgress -> {
-                    }
                     is GetGithubUserUseCase.State.LoadMoreFailed -> {
                         view.replaceLastItem(
                             MainContract.MainViewObject.LoadMoreProgress,
@@ -38,6 +36,9 @@ class MainPresenter(
                     is GetGithubUserUseCase.State.Data.FullyLoaded -> {
                         view.renderUsers(it.users.map(MainContract.MainViewObject::Item))
                     }
+                    is GetGithubUserUseCase.State.Data.Empty-> {
+                        view.showEmptyResult()
+                    }
                 }
 
             }, {
@@ -46,6 +47,7 @@ class MainPresenter(
     }
 
     override fun detachView() {
+        usecase.dispose()
         disposable.dispose()
     }
 

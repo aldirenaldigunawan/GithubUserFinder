@@ -9,6 +9,7 @@ interface MainContract {
         fun showProgress()
         fun hideProgress()
         fun replaceLastItem(oldItem: MainViewObject, newItem: MainViewObject)
+        fun showEmptyResult()
     }
 
     interface Presenter {
